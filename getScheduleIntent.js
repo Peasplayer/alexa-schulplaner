@@ -8,13 +8,40 @@ const GetScheduleIntent = {
             && handlerInput.requestEnvelope.request.intent.name === "GetScheduleIntent";
     },
     async handle(handlerInput) {
-        let prompt = "Es ist ein Fehler aufgetreten";
         const intent = handlerInput.requestEnvelope.request.intent;
+        console.log("0a")
+        let prompt = "Es ist ein Fehler aufgetreten";
+        console.log("0b" + intent.slots["day"])
+        let day = Utils.getSlotValue(intent.slots["day"]).id;
+        console.log("0c")
 
-        prompt = "Am " + Utils.getSlotValue(intent.slots["day"]).name + "hast du";
+        console.log("1")
+
+        if (Utils.getSlotValue(intent.slots["day"]).id === "today") {
+            const date = new Date(Date.now());
+            if (date.getDay() >= 5)
+                return handlerInput.responseBuilder.speak("Heute hast du keine Schule").getResponse();
+
+            day = Utils.days[date.getDay()];
+        }
+
+        console.log("2")
+
+        if (Utils.getSlotValue(intent.slots["day"]).id === "tomorrow") {
+            const date = new Date(Date.now()) + 1;
+            if (date.getDay() >= 5)
+                return handlerInput.responseBuilder.speak("Morgen hast du keine Schule").getResponse();
+
+            day = Utils.days[date.getDay()];
+        }
+
+        console.log("3: " + day)
+
+        prompt = Utils.getSlotValue(intent.slots["day"]).name + "hast du";
 
         for (let i = 1; i <= 8; i++) {
-            let subject = await db.get(Utils.getSlotValue(intent.slots["day"]).id + "." + i)
+            console.log("4")
+            let subject = await db.get(day + "." + i)
             if (subject !== undefined) {
                 prompt += " in der " + Utils.getLessonString(i)
                     + " Stunde " + Utils.subjects[subject] + ","

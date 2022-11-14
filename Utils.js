@@ -23,6 +23,13 @@ const Utils = {
                 return "achten";
         }
     },
+    days: [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday"
+    ],
     subjects: {
         "reli": "Religion",
         "wpu": "WPU",
